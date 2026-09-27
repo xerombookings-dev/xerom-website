@@ -229,10 +229,16 @@ test("booking form rejects a non-Malaysian mobile number before submit", async (
   expect(bookingPostCount).toBe(0);
 });
 
+test("booking setup presents Pro Rig, Regular Rig, then PS5", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-375", "Single read-only booking-order browser check");
+  await page.goto("/book");
+  const serviceIds = await page.locator(".quantity-list [data-service-row]").evaluateAll((rows) => rows.map((row) => row.getAttribute("data-service-row")));
+  expect(serviceIds).toEqual(["pro-sim", "regular-sim", "ps5"]);
+});
+
 test("booking setup enforces configured limits and controller rules", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-375", "Single setup validation browser check");
   await page.goto("/book");
-  expect(await page.locator(".quantity-list [data-service-row]").evaluateAll((rows) => rows.map((row) => row.getAttribute("data-service-row")))).toEqual(["pro-sim", "regular-sim", "ps5"]);
   await expect(page.locator('input[name="duration"]')).toHaveCount(4);
   await expect(page.getByLabel("Email address Optional")).toHaveAttribute("type", "email");
   const regularRow = page.locator('[data-service-row="regular-sim"]');

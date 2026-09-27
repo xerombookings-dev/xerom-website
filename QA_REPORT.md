@@ -9,10 +9,13 @@ Environment: local Astro / Cloudflare adapter; booking endpoints configured in m
 | Astro diagnostics and typecheck | Pass | `npm run check`: 0 errors, 0 warnings, 0 hints across 141 files. |
 | Unit tests | Pass | `npm test`: 144 passed across 26 files. |
 | Production build | Pass | `npm run build`: Cloudflare server output completed. |
-| Booking-order browser assertion | Added; local run blocked | `tests/e2e/site.spec.ts` asserts the `/book` rows are Pro Rig, Regular Rig, PS5 Lounge. `npx playwright test --list` found 150 tests, including the assertion. `npm run test:e2e` and direct Astro dev both exited before the server became ready with `Dev server process exited before becoming ready`; no browser assertion ran locally. |
+| Booking-order browser assertion | Pass | `PLAYWRIGHT_BASE_URL=https://xerom-website.xerombookings.workers.dev npm run test:e2e -- tests/e2e/site.spec.ts --project=mobile-375 --grep "booking setup presents Pro Rig"`: 1 passed against the deployed public page. It only opened `/book`; no booking was submitted. |
+| Full local Playwright suite | Environment blocked | `npm run test:e2e` and direct Astro dev both exited before the server became ready with `Dev server process exited before becoming ready`. `npx playwright test --list` enumerated the suite, but the local browser run did not start. |
+| Broader setup validation on deployed page | Partial | Its order assertion passed, then the existing test failed at its “maximum 3 regular rigs available” copy check against the deployed configuration. The isolated order test above passes. |
+| Public deployment smoke | Pass | The deployed `/book` page loaded at 375px with Pro Rig, Regular Rig, PS5 Lounge in that order. `npx wrangler deployments status --name xerom-website` could not run because this environment has no `CLOUDFLARE_API_TOKEN`. |
 | Staging build | Not run | `PUBLIC_TURNSTILE_SITE_KEY` is not configured in this local environment; the main-branch Workers Build supplies its deployment configuration. |
 
-No screenshot was captured. Main-branch deployment and deployed read-only booking-page verification are pending.
+No screenshot was captured. The focused remote browser check did not create or change Calendar events.
 
 ## Mobile membership menu parity — 2026-09-25
 
