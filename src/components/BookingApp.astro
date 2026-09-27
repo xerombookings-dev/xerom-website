@@ -7,7 +7,8 @@ import type { ConfigRevision } from "@/lib/config/schema";
 interface Props { runtimeConfig?: ConfigRevision }
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const runtimeConfig = Astro.props.runtimeConfig ?? (await resolveRuntimeConfig(cloudflareEnv)).config;
-const runtimeServices = Object.values(services).map((service) => {
+const bookingServiceOrder = ["pro-sim", "regular-sim", "ps5"] as const;
+const runtimeServices = bookingServiceOrder.map((serviceId) => services[serviceId]).map((service) => {
   const configured = runtimeConfig.services.find((candidate) => candidate.serviceId === service.id)!;
   const activeRate = runtimeConfig.rates.find((rate) => rate.serviceId === service.id && Date.parse(rate.effectiveFrom) <= Date.now() && (!rate.effectiveUntil || Date.now() < Date.parse(rate.effectiveUntil)));
   return { ...service, name: configured.name, description: configured.description, capacity: configured.enabled ? runtimeConfig.resources.filter((resource) => resource.serviceId === service.id && resource.lifecycle === "active").length : 0, hourlyRate: (activeRate?.amountSenPerResourceHour ?? 0) / 100 };

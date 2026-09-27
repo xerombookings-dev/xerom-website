@@ -1,5 +1,19 @@
 # QA Report
 
+## Booking setup card order — 2026-09-27
+
+Environment: local Astro / Cloudflare adapter; booking endpoints configured in mock mode. No booking was submitted.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Astro diagnostics and typecheck | Pass | `npm run check`: 0 errors, 0 warnings, 0 hints across 141 files. |
+| Unit tests | Pass | `npm test`: 144 passed across 26 files. |
+| Production build | Pass | `npm run build`: Cloudflare server output completed. |
+| Booking-order browser assertion | Added; local run blocked | `tests/e2e/site.spec.ts` asserts the `/book` rows are Pro Rig, Regular Rig, PS5 Lounge. `npx playwright test --list` found 150 tests, including the assertion. `npm run test:e2e` and direct Astro dev both exited before the server became ready with `Dev server process exited before becoming ready`; no browser assertion ran locally. |
+| Staging build | Not run | `PUBLIC_TURNSTILE_SITE_KEY` is not configured in this local environment; the main-branch Workers Build supplies its deployment configuration. |
+
+No screenshot was captured. Main-branch deployment and deployed read-only booking-page verification are pending.
+
 ## Mobile membership menu parity — 2026-09-25
 
 Environment: local Astro mock-mode E2E at `http://127.0.0.1:4323` and deployed Workers site at `https://xerom-website.xerombookings.workers.dev`. Browser checks only opened public pages; no booking was submitted.

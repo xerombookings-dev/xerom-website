@@ -232,6 +232,7 @@ test("booking form rejects a non-Malaysian mobile number before submit", async (
 test("booking setup enforces configured limits and controller rules", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-375", "Single setup validation browser check");
   await page.goto("/book");
+  expect(await page.locator(".quantity-list [data-service-row]").evaluateAll((rows) => rows.map((row) => row.getAttribute("data-service-row")))).toEqual(["pro-sim", "regular-sim", "ps5"]);
   await expect(page.locator('input[name="duration"]')).toHaveCount(4);
   await expect(page.getByLabel("Email address Optional")).toHaveAttribute("type", "email");
   const regularRow = page.locator('[data-service-row="regular-sim"]');
