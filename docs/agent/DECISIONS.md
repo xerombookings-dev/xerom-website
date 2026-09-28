@@ -4,7 +4,7 @@
 
 - Keep GoDaddy as registrar and use Cloudflare as authoritative DNS for `xeromracing.com`; the domain registration is not being transferred.
 - Use `https://xeromracing.com` as the canonical production URL. Attach both apex and `www` custom domains to `xerom-website`; redirect `www` to the apex.
-- Build the public Worker with `npm run build` and the canonical Astro site URL. Keep the `workers.dev` fallback noindex, preserve the existing Turnstile widget/secret, and validate Turnstile for the canonical apex.
+- Build the public Worker with `npm run build` and the canonical Astro site URL. Keep its `workers.dev` fallback enabled and noindex, disable preview URLs until safe preview configuration exists, preserve the existing Turnstile widget/secret, and validate Turnstile for the canonical apex.
 - Preserve the existing DMARC and `_domainconnect` DNS records. Replace GoDaddy WebsiteBuilder apex records and `www` alias with Worker custom-domain records.
 
 ## 2026-09-24 — Client Cloudflare staging protection and rate limits

@@ -120,11 +120,12 @@ The five documented Rate Limiting bindings are configured on the client Worker: 
 1. Keep `https://xeromracing.com` as the canonical URL in `astro.config.mjs` and the Workers Build environment.
 2. The apex and `www` custom domains are attached to `xerom-website`; middleware redirects `www` to the apex.
 3. Keep the Workers Build command at `npm run build`. `npm run build:staging` forces `noindex` and the temporary Worker URL, so it is not the production build command.
-4. Verify `/robots.txt`, `/sitemap.xml`, canonical tags, Open Graph image, LocalBusiness JSON-LD, contact links, Google Maps URL, Turnstile verification, and the `www` redirect after nameserver propagation.
+4. Keep `workers_dev` enabled for the noindex fallback and `preview_urls` disabled until preview deployments are safe for production bindings.
+5. Verify `/robots.txt`, `/sitemap.xml`, canonical tags, Open Graph image, LocalBusiness JSON-LD, contact links, Google Maps URL, Turnstile verification, and the `www` redirect after nameserver propagation.
 
 ### Domain cutover — 2026-09-28
 
-The owner supplied `xeromracing.com` and selected the apex as canonical. The `xerom-website` production Worker now has custom domains for `xeromracing.com` and `www.xeromracing.com`. GoDaddy accepted the nameserver change to `kami.ns.cloudflare.com` and `kareem.ns.cloudflare.com`; Cloudflare is still waiting for registrar propagation. GoDaddy's old WebsiteBuilder apex A records and `www` CNAME were removed from the Cloudflare zone so the Worker domains can own those hostnames. The `_domainconnect` CNAME is DNS-only and the existing DMARC TXT record was preserved. No MX record was present in the GoDaddy zone. Do not announce the canonical site as live until Cloudflare reports the zone active and the production Worker build is deployed and verified.
+The owner supplied `xeromracing.com` and selected the apex as canonical. The `xerom-website` production Worker now has custom domains for `xeromracing.com` and `www.xeromracing.com`. GoDaddy accepted the nameserver change to `kami.ns.cloudflare.com` and `kareem.ns.cloudflare.com`; Cloudflare is still waiting for registrar propagation. GoDaddy's old WebsiteBuilder apex A records and `www` CNAME were removed from the Cloudflare zone so the Worker domains can own those hostnames. The `_domainconnect` CNAME is DNS-only and the existing DMARC TXT record was preserved. No MX record was present in the GoDaddy zone. Build `85e09de1-0697-4279-9a7c-e65432ca4572` deployed version `0a3c5deb-a2cd-4d6e-89de-b162914d0fa9` with both custom domains. Its Wrangler output warned that the `workers.dev` route would be disabled because the config omitted `workers_dev`; the next deploy will explicitly keep that fallback enabled and preview URLs disabled. Do not announce the canonical site as live until Cloudflare reports the zone active and the production Worker build is deployed and verified.
 
 ## Deployment gates
 

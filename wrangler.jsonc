@@ -2,6 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "xerom-website",
   "compatibility_date": "2026-09-09",
+  "workers_dev": true,
+  "preview_urls": false,
   "vars": {
     "BOOKING_MODE": "live",
     "ACCESS_TEAM_DOMAIN": "https://icy-wave-7d2a.cloudflareaccess.com",
