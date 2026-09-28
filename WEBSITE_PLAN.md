@@ -1,6 +1,6 @@
 # Xerom Website Plan
 
-Status: the client-owned website Worker is connected to live Google Calendars. The owner supplied `xeromracing.com`; its apex and `www` custom domains are attached to `xerom-website`, and GoDaddy nameserver propagation is in progress. Final social hero/OG photos remain owner inputs; see `CONTENT_TODO.md`.
+Status: the client-owned website Worker is connected to live Google Calendars. The domain cutover is complete: the apex and `www` custom domains are attached to `xerom-website`, the apex loads, and `www` redirects to the apex. Final social hero/OG photos remain owner inputs; see `CONTENT_TODO.md`.
 
 Mobile is a first-class authored surface. The mobile concept must preserve the social-first story and booking clarity rather than merely stacking a desktop layout.
 
