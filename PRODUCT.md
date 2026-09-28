@@ -14,7 +14,7 @@ Astro + TypeScript, deployed to the client-owned Cloudflare Workers account thro
 
 The primary customers are local casual groups visiting from phones after discovering Xerom through Instagram, Google Maps, Google Search, WhatsApp, or shared links. Secondary audiences are families and serious sim racers. The public website is English-only for the MVP.
 
-The owner operates bookings through Race Control, a private owner-only front-desk dashboard. Google Calendar remains the persistent booking system of record. The client-owned staging deployment is live on a temporary `workers.dev` hostname; canonical domain cutover is pending.
+The owner operates bookings through Race Control, a private owner-only front-desk dashboard. Google Calendar remains the persistent booking system of record. The production site uses the owner-supplied canonical domain `https://xeromracing.com`; the `workers.dev` hostname remains available as a noindex fallback.
 
 ## Product Purpose
 
@@ -108,12 +108,12 @@ Target WCAG 2.2 AA for the public experience. Booking must support keyboard navi
 
 ## Owner close-out — 2026-09-24
 
-- Adopt the current address and Maps URL already in the business profile, and use the confirmed phone/WhatsApp contact. The canonical domain is still pending.
+- Adopt the current address and Maps URL already in the business profile, and use the confirmed phone/WhatsApp contact. The owner supplied `xeromracing.com` on 2026-09-28; use the apex hostname as canonical and redirect `www` to it.
 - Use a rolling 72-hour public booking horizon. Date-specific hours in Race Control control availability; announce closures/hour changes on Instagram until an on-site announcement feature is delivered.
 - Do not apply discounts or display previous/compare-at prices. Base prices remain Regular RM20/hour, Pro RM30/hour, and PS5 RM18/hour with two controllers; extra controllers are RM3 each per booking, up to six.
 - Keep general Regular and Pro equipment descriptions. Omit part/model-level hardware claims until current equipment is confirmed. Do not list game titles, cafe menu/prices, access/parking details, or testimonials without verified source material.
 - Cancellation/change requests go to WhatsApp with the booking ID. Use a 15-minute late-arrival grace period; staff may mark a booking as no-show after that without contact. The booked end time remains fixed, and extensions depend on availability and staff confirmation. No cancellation fees, refunds or deposits are claimed.
 - Use WhatsApp/phone as the privacy contact. Public booking notes are disabled to minimize collected information; email remains optional and no confirmation email is sent.
-- The social-group hero and social-share photos remain owner-input items by explicit direction; keep the current clearly labelled placeholders. The temporary worker hostname remains noindex until the owner supplies the canonical domain.
+- The social-group hero and social-share photos remain owner-input items by explicit direction; keep the current clearly labelled placeholders. Keep the temporary `workers.dev` hostname noindex after the canonical-domain build ships.
 - No customer reminders or Calendar color convention are configured. Calendar event titles use the existing format `{bookingId} | {SERVICE} | {customerName} | {duration}m`. Historical Calendar events are retained; deletion remains blocked for non-empty resource calendars.
 - Terminal Race Control operation records may be retained for 30 days; any unresolved recovery record and its capacity fence must remain until reconciled.

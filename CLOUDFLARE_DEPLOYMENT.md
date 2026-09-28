@@ -31,7 +31,7 @@ Workers Builds deploys the same `xerom-website` Worker after each `main` push. T
 
 ## Client-owned temporary Worker — 2026-09-24
 
-The transferred repository is deployed in the client account at `https://xerom-website.xerombookings.workers.dev`, bound to `xerom-race-control-coordinator`. The Worker is live on the seven production-named, private Google Calendars owned by `xerombookings@gmail.com`. The temporary URL is marked `noindex`; attach the approved canonical hostname and update the Turnstile widget before domain cutover. Workers Builds is scoped to this repository and `main`; four automated deployments completed successfully, with Worker version `9b17b63b-4ed1-415b-a571-f6e2bd0b877d` at the final application smoke-check checkpoint.
+The transferred repository is deployed in the client account at `https://xerom-website.xerombookings.workers.dev`, bound to `xerom-race-control-coordinator`. The Worker is live on the seven production-named, private Google Calendars owned by `xerombookings@gmail.com`. Keep the `workers.dev` URL marked `noindex`; it remains available as a fallback after canonical-domain deployment. Workers Builds is scoped to this repository and `main`; four automated deployments completed successfully, with Worker version `9b17b63b-4ed1-415b-a571-f6e2bd0b877d` at the final application smoke-check checkpoint.
 
 The bare `/race-control` entry, nested Race Control routes, and `/api/admin/*` are protected by Cloudflare Access for the owner email. The public booking flow uses a managed Turnstile widget scoped to the Worker hostname, and the Worker has all five Rate Limiting bindings. Test reservations on these calendars are real reservations: label them clearly and remove them from every assigned calendar after the test.
 
@@ -109,7 +109,7 @@ Preview environments should use `BOOKING_MODE=disabled` unless they are connecte
 
 ### Hostname cutover
 
-The current managed widget is scoped to `xerom-website.xerombookings.workers.dev`. Add the eventual canonical hostname to a verified widget before domain cutover and update `TURNSTILE_EXPECTED_HOSTNAME`; test credentials must never remain on a production hostname.
+The managed widget allows `xerom-website.xerombookings.workers.dev` and `xeromracing.com` (which also authorizes its subdomains). The production Worker must use `TURNSTILE_EXPECTED_HOSTNAME=xeromracing.com`; keep test credentials off production hostnames.
 
 ## Rate limiting
 
@@ -117,10 +117,14 @@ The five documented Rate Limiting bindings are configured on the client Worker: 
 
 ## Domain and SEO
 
-1. Attach the approved canonical hostname.
-2. Update `site` in `astro.config.mjs` if the final hostname is not `https://xerom.my`.
-3. Confirm redirects between `www` and apex.
-4. Verify `/robots.txt`, `/sitemap.xml`, canonical tags, Open Graph image, LocalBusiness JSON-LD, contact links, and Google Maps URL.
+1. Keep `https://xeromracing.com` as the canonical URL in `astro.config.mjs` and the Workers Build environment.
+2. The apex and `www` custom domains are attached to `xerom-website`; middleware redirects `www` to the apex.
+3. Keep the Workers Build command at `npm run build`. `npm run build:staging` forces `noindex` and the temporary Worker URL, so it is not the production build command.
+4. Verify `/robots.txt`, `/sitemap.xml`, canonical tags, Open Graph image, LocalBusiness JSON-LD, contact links, Google Maps URL, Turnstile verification, and the `www` redirect after nameserver propagation.
+
+### Domain cutover — 2026-09-28
+
+The owner supplied `xeromracing.com` and selected the apex as canonical. The `xerom-website` production Worker now has custom domains for `xeromracing.com` and `www.xeromracing.com`. GoDaddy accepted the nameserver change to `kami.ns.cloudflare.com` and `kareem.ns.cloudflare.com`; Cloudflare is still waiting for registrar propagation. GoDaddy's old WebsiteBuilder apex A records and `www` CNAME were removed from the Cloudflare zone so the Worker domains can own those hostnames. The `_domainconnect` CNAME is DNS-only and the existing DMARC TXT record was preserved. No MX record was present in the GoDaddy zone. Do not announce the canonical site as live until Cloudflare reports the zone active and the production Worker build is deployed and verified.
 
 ## Deployment gates
 

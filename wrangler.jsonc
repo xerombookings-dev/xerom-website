@@ -6,8 +6,12 @@
     "BOOKING_MODE": "live",
     "ACCESS_TEAM_DOMAIN": "https://icy-wave-7d2a.cloudflareaccess.com",
     "ACCESS_AUDIENCE": "9acdb8ad52c585899202e9be7c345ebabe51bf37f79c33f2b31f3afac09d5bc8",
-    "TURNSTILE_EXPECTED_HOSTNAME": "xerom-website.xerombookings.workers.dev"
+    "TURNSTILE_EXPECTED_HOSTNAME": "xeromracing.com"
   },
+  "routes": [
+    { "pattern": "xeromracing.com", "custom_domain": true },
+    { "pattern": "www.xeromracing.com", "custom_domain": true }
+  ],
   "ratelimits": [
     { "name": "PUBLIC_AVAILABILITY_RATE_LIMIT", "namespace_id": "101001", "simple": { "limit": 120, "period": 60 } },
     { "name": "PUBLIC_BOOKING_RATE_LIMIT", "namespace_id": "101002", "simple": { "limit": 10, "period": 60 } },

@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? "https://xerom.my",
+  site: process.env.SITE_URL ?? "https://xeromracing.com",
   devToolbar: { enabled: false },
   output: "server",
   session: false,

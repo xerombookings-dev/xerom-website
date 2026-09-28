@@ -15,6 +15,9 @@ const securityHeaders: Record<string, string> = {
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
+  if (url.hostname === "www.xeromracing.com") {
+    return Response.redirect(new URL(`${url.pathname}${url.search}`, "https://xeromracing.com"), 308);
+  }
   const env = cloudflareEnv as typeof cloudflareEnv & CloudflareEnv;
   const ownerRoute = url.pathname === "/race-control" || url.pathname.startsWith("/race-control/") || url.pathname.startsWith("/api/admin/");
   if (ownerRoute) {
@@ -38,6 +41,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
   const headers = new Headers(response.headers);
   for (const [name, value] of Object.entries(securityHeaders)) headers.set(name, value);
+  if (url.hostname === "xerom-website.xerombookings.workers.dev") headers.set("X-Robots-Tag", "noindex, nofollow");
   if (url.protocol === "https:") headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   if (ownerRoute) headers.set("Cache-Control", "private, no-store");
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });

@@ -4,7 +4,7 @@ Only owner-supplied inputs that cannot be safely chosen from the existing busine
 
 ## Remaining owner inputs
 
-- [ ] Provide the canonical domain and preferred hostname for production cutover. Until then, keep `https://xerom-website.xerombookings.workers.dev`, `noindex`, and the hostname-scoped Turnstile widget.
+- [x] Provide the canonical domain and preferred hostname for production cutover. The owner supplied `xeromracing.com` on 2026-09-28; use `https://xeromracing.com` as canonical and redirect `www` to the apex.
 - [ ] Provide final owner-approved social-group hero and social-share/OG photography with usage rights. Keep the current clearly labelled hero placeholder and OG image until supplied.
 - [ ] Provide final cafe/menu photography and verified menu details when ready. Keep the current cafe image and copy until then; the new `Edited/from_owner/xerom_cafe.jpeg` is held for owner review.
 - [x] Provide replacement photos for the homepage Choose Your Setup slideshow. Four owner-supplied Xerom Experience photos were received and placed on 2026-09-26.
@@ -32,7 +32,7 @@ Only owner-supplied inputs that cannot be safely chosen from the existing busine
 
 - [x] Seven private client-owned Google Calendars (three Regular Sim, one Pro Sim, two PS5 Lounge, one Booking Control) use `Asia/Kuala_Lumpur` and are shared with the client-owned booking service account.
 - [x] Calendar IDs and service-account credentials are stored only in encrypted Worker configuration.
-- [x] Real managed Turnstile is restricted to the current Workers hostname. Add the future hostname to the widget and update the build/secret configuration during domain cutover.
+- [x] The existing managed Turnstile widget allows `xerom-website.xerombookings.workers.dev` and `xeromracing.com`; the root entry also covers `www.xeromracing.com`. Keep the secret encrypted and set the Worker expected hostname to the canonical apex during deployment.
 - [x] Cloudflare R2 is enabled for private versioned Race Control configuration and media. `r2.dev` and custom bucket domains remain disabled.
 - [x] Five Cloudflare Rate Limiting bindings are configured for public booking/availability and owner mutations.
 

@@ -1,6 +1,12 @@
 # Agent Handoff
 
-Last updated: 2026-09-24
+Last updated: 2026-09-28
+
+## Canonical domain cutover — 2026-09-28
+
+The owner supplied `xeromracing.com`. GoDaddy accepted Cloudflare nameservers `kami.ns.cloudflare.com` and `kareem.ns.cloudflare.com`; Cloudflare still reports propagation in progress. The production `xerom-website` Worker has custom domains for the apex and `www`. The old GoDaddy WebsiteBuilder apex A records and `www` CNAME were removed from the Cloudflare zone; `_domainconnect` is DNS-only and DMARC is preserved. No MX record was present. The existing Turnstile widget now allows the apex hostname (which also covers `www`).
+
+The repository now sets the apex as canonical, redirects `www` to the apex, keeps the `workers.dev` fallback noindex, configures both custom domains in Wrangler, and expects Turnstile hostname `xeromracing.com`. Cloudflare Workers Builds is set to `npm run build`; these local changes still need a production deployment. Before calling cutover complete, push the prepared website change to `main`, wait for the Cloudflare zone to become active, and verify HTTPS, the `www` redirect, `/robots.txt`, `/sitemap.xml`, canonical metadata, booking Turnstile/Siteverify, and the live booking flow without creating a test Calendar reservation.
 
 ## Owner configuration and staging close-out — 2026-09-24
 
