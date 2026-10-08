@@ -5,7 +5,7 @@ Only owner-supplied inputs that cannot be safely chosen from the existing busine
 ## Remaining owner inputs
 
 - [x] Provide the canonical domain and preferred hostname for production cutover. The owner supplied `xeromracing.com` on 2026-09-28; use `https://xeromracing.com` as canonical and redirect `www` to the apex.
-- [ ] Provide final owner-approved social-group hero and social-share/OG photography with usage rights. Keep the current clearly labelled hero placeholder and OG image until supplied.
+- [ ] Provide final owner-approved social-group hero and social-share/OG photography with usage rights. The owner approved keeping the current images on 2026-10-08. Keep the hero disclosed as an illustration and preserve its placeholder provenance until replaced.
 - [ ] Provide final cafe/menu photography and verified menu details when ready. Keep the current cafe image and copy until then; the new `Edited/from_owner/xerom_cafe.jpeg` is held for owner review.
 - [x] Provide replacement photos for the homepage Choose Your Setup slideshow. Four owner-supplied Xerom Experience photos were received and placed on 2026-09-26.
 
@@ -26,7 +26,7 @@ Only owner-supplied inputs that cannot be safely chosen from the existing busine
 - [x] Operation journal retention: completed operation records may be retained for 30 days; unresolved recovery records and fences remain until reconciled. Enforcement is tracked as engineering work.
 - [x] Equipment: keep the existing general Regular/Pro descriptions. Omit part/model-level hardware claims until current equipment is confirmed.
 - [x] Cafe, games, accessibility, parking/transit, gallery and testimonials: publish no unverified menu, game, amenity, social-photo or review claims. Add them only when sourced material is supplied.
-- [x] Membership: the program and registration are not set up. Per owner direction on 2026-09-25, the white desktop header button and matching mobile menu item say “BECOME A MEMBER!” and link to `/membership`, a placeholder that clearly states registration and purchase are unavailable. Keep the red booking button labeled “BOOK A SESSION” and routed to `/book`; do not invent membership terms.
+- [x] Membership: the program and registration are not set up. Per owner direction on 2026-09-25, the white desktop header button and matching mobile menu item say “BECOME A MEMBER!” and link to `/membership`. Its information page clearly states registration and purchases are unavailable, using production copy approved on 2026-10-08. Keep the red booking button labeled “BOOK A SESSION” and routed to `/book`; do not invent membership terms.
 
 ## Connected business systems
 

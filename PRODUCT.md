@@ -117,3 +117,9 @@ Target WCAG 2.2 AA for the public experience. Booking must support keyboard navi
 - The social-group hero and social-share photos remain owner-input items by explicit direction; keep the current clearly labelled placeholders. Keep the temporary `workers.dev` hostname noindex after the canonical-domain build ships.
 - No customer reminders or Calendar color convention are configured. Calendar event titles use the existing format `{bookingId} | {SERVICE} | {customerName} | {duration}m`. Historical Calendar events are retained; deletion remains blocked for non-empty resource calendars.
 - Terminal Race Control operation records may be retained for 30 days; any unresolved recovery record and its capacity fence must remain until reconciled.
+
+## Owner update: production copy cleanup, 2026-10-08
+
+- Replace draft and placeholder page copy with confirmed information. Membership registration and purchases remain unavailable; Events and What's New continue to direct visitors to Instagram for announcements and opening-hour changes.
+- Placeholder images may remain. The social-group hero must remain disclosed as an illustration, with its temporary status retained in source filenames and media provenance. Customer-facing copy should describe the illustration without internal replacement instructions.
+- Replace synthetic Race Control schedules, booking records and inspector details with Calendar connection, initial, loading and error states. Local public bookings remain in mock mode; owner booking views display only records read from Calendar.

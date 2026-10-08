@@ -21,13 +21,59 @@ test("Race Control shell is private-labelled, responsive, and free of browser er
   await expect(page.locator(".rc-summary")).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
   await expect(page.locator("body")).not.toContainText("fixture-calendar-ref");
+  await expect(page.locator("main")).not.toContainText(/XR-DEMO|MOCK GROUP|MOCK CUSTOMER|MOCK FAMILY|Demo customer/);
+  if (await page.locator("[data-rc-live-enabled]").getAttribute("data-rc-live-enabled") === "false") {
+    await expect(page.locator("[data-rc-connection-required]")).toBeVisible();
+    await expect(page.locator("[data-rc-connection-required] a")).toHaveAttribute("href", "/race-control/connection");
+    await expect(page.locator(".rc-inspector-disconnected")).toHaveCSS("position", "static");
+  }
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
   expect(consoleErrors).toEqual([]);
   expect(failedRequests).toEqual([]);
 
-  await mkdir(".impeccable/review/race-control", { recursive: true });
-  await page.screenshot({ path: `.impeccable/review/race-control/${testInfo.project.name}.png`, fullPage: true, animations: "disabled" });
+  const reviewDirectory = process.env.VISUAL_VARIANT ? `.impeccable/review/${process.env.VISUAL_VARIANT}/race-control` : ".impeccable/review/race-control";
+  await mkdir(reviewDirectory, { recursive: true });
+  await page.screenshot({ path: `${reviewDirectory}/${testInfo.project.name}.png`, fullPage: true, animations: "disabled" });
+});
+
+test("Bookings replaces initial and previously loaded rows with loading and error states", async ({ page }) => {
+  let failSearch = false;
+  let releaseResponse!: () => void;
+  const responseReady = new Promise<void>((resolve) => { releaseResponse = resolve; });
+  await page.route("**/api/admin/bookings?**", async (route) => {
+    if (failSearch) {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: { message: "Calendar read unavailable." } }) });
+      return;
+    }
+    await responseReady;
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [{
+      bookingId: "XR-TEST-STATE", version: 0, status: "confirmed", start: "2026-10-08T18:00:00+08:00", end: "2026-10-08T19:00:00+08:00", durationMinutes: 60,
+      customer: { name: "Browser test customer", phone: "" }, resources: ["Regular Rig 01"], additionalControllers: 0, priceTotal: 20, eventCount: 1,
+    }] }) });
+  });
+  await page.goto("/race-control/bookings");
+  const rows = page.locator("[data-rc-booking-rows]");
+  const assertEmptyStateFits = async () => {
+    const bounds = await rows.locator("td").evaluate((cell) => ({ width: cell.getBoundingClientRect().width, containerWidth: cell.closest(".rc-table-wrap")!.getBoundingClientRect().width }));
+    expect(bounds.width).toBeLessThanOrEqual(bounds.containerWidth + 1);
+  };
+  await expect(rows).toContainText("Choose a date range and search Calendar to view bookings.");
+  await assertEmptyStateFits();
+  await expect(rows).not.toContainText(/XR-DEMO|Demo customer|fixture/);
+  await page.getByRole("button", { name: "Search Calendar", exact: true }).click();
+  await expect(rows).toHaveText("Loading Calendar bookings…");
+  await assertEmptyStateFits();
+  releaseResponse();
+  await expect(rows).toContainText("XR-TEST-STATE");
+  await expect(page.getByRole("columnheader", { name: "Experience", exact: true })).toBeVisible();
+  failSearch = true;
+  await page.getByRole("button", { name: "Search Calendar", exact: true }).click();
+  await expect(rows).toHaveText("Bookings could not be loaded. Try searching again.");
+  await assertEmptyStateFits();
+  await expect(rows).not.toContainText("XR-TEST-STATE");
+  await expect(page.locator("[data-rc-search-result]")).toContainText("Calendar read unavailable. Try searching again.");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
 });
 
 test("Activity history separates audited actions from recovery holds without customer details", async ({ page }) => {
@@ -109,7 +155,6 @@ test("Bookings exposes combinable filters and normalized CSV export", async ({ p
   await page.goto("/race-control/bookings");
   await expect(page.getByLabel("Phone number")).toBeVisible();
   await expect(page.getByLabel("Experience type")).toHaveValue("");
-  await expect(page.getByRole("columnheader", { name: "Experience" })).toBeVisible();
   await expect(page.getByLabel("Duration")).toHaveValue("");
   const downloadPromise = page.waitForEvent("download").catch(() => null);
   await page.route("**/api/admin/bookings?**", async (route) => {

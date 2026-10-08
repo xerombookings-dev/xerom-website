@@ -74,7 +74,7 @@ For a remote client, screen-share the owner session. Do not send Calendar IDs, s
 ## Troubleshooting
 
 - **Access redirect/302:** the route is protected. Complete the owner One-time PIN flow; a non-allowlisted identity is expected to be denied.
-- **Demo fixture banner:** the preview is missing its live server-side bindings or the request is running locally. Local development intentionally uses fixtures.
+- **Calendar not connected:** the preview is missing its live server-side Calendar credentials or coordinator binding. The Schedule and inspector show connection guidance; the booking register shows an initial search state until Calendar records are loaded. Local public booking remains in mock mode.
 - **Live Calendar unavailable:** retry once. If it persists, stop; no availability is being claimed and settings publication is not available.
 - **Settings publication:** save the private draft, run **Review changes**, read every reported Calendar conflict, then use **Publish reviewed draft** within five minutes. Publication asks for confirmation and rechecks Calendar inside the coordinator before changing the public site. Never retry by manually editing `active.json`.
 - **Rollback:** **Prepare rollback** only replaces the private draft with the prior published settings. The public site remains unchanged until that draft is saved, reviewed and published as a new revision.

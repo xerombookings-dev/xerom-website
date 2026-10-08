@@ -1,24 +1,19 @@
 ---
 interface Props { liveEnabled?: boolean; businessDate?: string }
-const { liveEnabled = false, businessDate = "2026-09-16" } = Astro.props;
+const { liveEnabled = false, businessDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()) } = Astro.props;
 const agendaDate = new Intl.DateTimeFormat("en-MY", { timeZone: "Asia/Kuala_Lumpur", weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date(`${businessDate}T12:00:00+08:00`));
-const resources = ['Regular 01','Regular 02','Regular 03','Pro 01','PS5 01','PS5 02'];
-const events = [['MOCK GROUP','3–5 PM','Regular 01'],['STAFF HOLD','5–6 PM','Regular 02'],['MOCK CUSTOMER','2–4 PM','Regular 03'],['MOCK GROUP','6–7 PM','Pro 01'],['MOCK FAMILY','4–6 PM','PS5 01'],['MAINTENANCE','2–3 PM','PS5 02']];
-const mobileEvents = events.map((event, index) => ({ event, resource: resources[index], startOrder: [15, 17, 14, 18, 16, 14][index] })).sort((left, right) => left.startOrder - right.startOrder || left.resource.localeCompare(right.resource));
 ---
 <section class="rc-panel rc-agenda-panel" aria-labelledby="agenda-title" data-rc-live-enabled={liveEnabled ? 'true' : 'false'}>
-  <div class="rc-panel-head"><div><h2 id="agenda-title">{agendaDate}</h2><span data-rc-agenda-subtitle>{liveEnabled ? 'MYT · shared Calendar' : 'MYT · synthetic schedule'}</span></div><div class="rc-legend"><span class="confirmed">Confirmed</span><span class="blocked">Blocked</span><span class="open">Open</span></div></div>
-  <p class="rc-mobile-cue">Agenda view · swipe to inspect the full operating window</p>
-  <div class="rc-mobile-agenda-list" aria-label="Synthetic agenda by start time" aria-hidden={liveEnabled} hidden={liveEnabled}>
-    {mobileEvents.map(({ event, resource }) => <article><time>{event[1]}</time><div><strong>{event[0]}</strong><span>{resource} · fixture</span></div><button type="button" aria-label={`Details for ${event[0]}, ${resource}, ${event[1]}`}>Details</button></article>)}
+  <div class="rc-panel-head"><div><h2 id="agenda-title">{agendaDate}</h2><span data-rc-agenda-subtitle>{liveEnabled ? 'MYT · shared Calendar' : 'MYT · Calendar not connected'}</span></div>{liveEnabled && <div class="rc-legend"><span class="confirmed">Confirmed</span><span class="blocked">Blocked</span><span class="open">Open</span></div>}</div>
+  {liveEnabled && <p class="rc-mobile-cue">Agenda view · swipe to inspect the full operating window</p>}
+  <div class="rc-empty" data-rc-connection-required hidden={liveEnabled}>
+    <h2>Calendar connection required</h2>
+    <p>Connect the shared Calendar to view the live schedule and bookings.</p>
+    <a class="rc-button" href="/race-control/connection">View Calendar connection</a>
   </div>
-  <div class="rc-agenda" aria-label="Demo fixture resource timeline" aria-hidden={liveEnabled} hidden={liveEnabled}>
-    <div class="rc-time-row"><span>Resource</span>{['2 PM','3 PM','4 PM','5 PM','6 PM','7 PM','8 PM','9 PM','10 PM','11 PM','12 AM'].map((t) => <span>{t}</span>)}</div>
-    {resources.map((resource, index) => <div class="rc-resource-row"><div class="rc-resource-label"><i class:list={{busy:index===0||index===2||index===4, warning:index===5}}></i><span>{resource}<small>{resource.startsWith('PS5') ? 'play lounge' : resource.startsWith('Pro') ? 'pro sim' : 'sim racing'}</small></span></div><div class="rc-track" aria-label={`${resource} demo fixture events`}><span class="rc-open-track"></span>{events[index] && <button class:list={{'rc-event':true,'rc-event-maintenance':index===5}} type="button" aria-label={`${events[index][0]}, ${resource}, ${events[index][1]}`}><b>{events[index][0]}</b><small>{events[index][1]}</small></button>}</div></div>)}
-  </div>
-  <p class="rc-panel-foot" hidden={liveEnabled}>{!liveEnabled && 'All blocks are labelled synthetic fixtures. A future live view must treat every busy Calendar event as unavailable.'}</p>
+  <p class="rc-panel-foot" hidden={!liveEnabled}>Loading shared Calendar schedule…</p>
   <div class="rc-live-events" data-rc-live-events aria-hidden={!liveEnabled} hidden={!liveEnabled} aria-live="polite" aria-busy={liveEnabled}>
-    <p class="rc-live-status" data-rc-live-status hidden></p>
+    <p class="rc-live-status" data-rc-live-status>Loading shared Calendar schedule…</p>
     <div class="rc-live-chart-wrap"><div class="rc-live-chart" data-rc-live-chart role="grid" aria-label="Live Google Calendar resource schedule"></div></div>
     <div class="rc-live-mobile-list" data-rc-live-mobile-list aria-label="Live Google Calendar agenda"></div>
   </div>
@@ -35,8 +30,6 @@ const mobileEvents = events.map((event, index) => ({ event, resource: resources[
   const liveStatus = document.querySelector<HTMLElement>("[data-rc-live-status]");
   const liveChart = document.querySelector<HTMLElement>("[data-rc-live-chart]");
   const liveMobileList = document.querySelector<HTMLElement>("[data-rc-live-mobile-list]");
-  const fixtureTimeline = document.querySelector<HTMLElement>(".rc-agenda");
-  const fixtureMobile = document.querySelector<HTMLElement>(".rc-mobile-agenda-list");
   const footer = document.querySelector<HTMLElement>(".rc-agenda-panel .rc-panel-foot");
   const heading = document.querySelector<HTMLElement>("#agenda-title");
   const subtitle = document.querySelector<HTMLElement>("[data-rc-agenda-subtitle]");
@@ -163,8 +156,6 @@ const mobileEvents = events.map((event, index) => ({ event, resource: resources[
       loadedEvents = loadedResources.flatMap((resource) => resource.events.map((event) => ({ ...event, resourceId: event.resourceId ?? resource.resourceId, resourceName: resource.displayName, serviceId: event.serviceId ?? resource.serviceId }))).sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
       renderLiveEvents();
       liveContainer.classList.remove("rc-schedule-stale");
-      fixtureTimeline?.setAttribute("hidden", ""); fixtureTimeline?.setAttribute("aria-hidden", "true");
-      fixtureMobile?.setAttribute("hidden", ""); fixtureMobile?.setAttribute("aria-hidden", "true");
       if (subtitle) subtitle.textContent = "MYT · shared Calendar";
       if (footer) footer.textContent = `Live Calendar read · refreshed ${new Intl.DateTimeFormat("en-MY", { timeZone: "Asia/Kuala_Lumpur", hour: "numeric", minute: "2-digit", second: "2-digit" }).format(new Date(payload.serverNow))}`;
     } catch (error) {
@@ -179,8 +170,6 @@ const mobileEvents = events.map((event, index) => ({ event, resource: resources[
         liveChart?.replaceChildren(); liveMobileList?.replaceChildren();
         if (liveStatus) { liveStatus.hidden = false; liveStatus.textContent = error instanceof Error ? `${error.message} No availability is being claimed.` : "Schedule unavailable. No availability is being claimed."; }
       }
-      fixtureTimeline?.setAttribute("hidden", ""); fixtureTimeline?.setAttribute("aria-hidden", "true");
-      fixtureMobile?.setAttribute("hidden", ""); fixtureMobile?.setAttribute("aria-hidden", "true");
       if (subtitle) subtitle.textContent = "MYT · live read unavailable";
       if (footer) footer.textContent = "Live Calendar read unavailable · retry or reconnect Google.";
     } finally {

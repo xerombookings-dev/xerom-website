@@ -1,6 +1,18 @@
 # Agent Handoff
 
-Last updated: 2026-09-28
+Last updated: 2026-10-08
+
+## Production publication authorized: 2026-10-08
+
+The owner requested GitHub publication and Cloudflare's automatic build for `xeromracing.com`. The client dashboard confirms production `main` uses `npm run build` and `npx wrangler deploy`; older staging-command guidance was corrected in the docs. Coordinator version `172bde2c` is already active at 100%, and this release has no coordinator source/binding changes or need for a manual coordinator deployment.
+
+The deployment dependency audit found 10 existing production advisories, now cleared by compatible transitive updates and scoped Sharp/Miniflare overrides. Astro, the adapter and Wrangler retain their existing versions. All local release gates passed again with the patched lockfile: lint, typecheck, 144 unit tests, 42 media derivatives, production-equivalent build, both Worker dry runs, and 103 browser checks with 59 expected skips. Live read-only preflight is healthy. The release is ready for the authorized `main` push; monitor the automatic build and record the deployed checkpoint after it completes. Keep the dated browser evidence local rather than changing historical screenshot baselines.
+
+## Production copy cleanup: 2026-10-08
+
+The owner reviewed the inventory and approved replacement/removal of placeholder text while images remain. Public copy now states the confirmed membership unavailability and directs visitors to Instagram for announcements. The temporary hero keeps its image provenance and an illustration disclosure. The unused Lorem ipsum component and its styles are removed.
+
+Race Control now shows Calendar connection guidance instead of synthetic schedules/inspector details, and the booking register uses initial, loading, no-results and error states. Failed searches clear previous rows. The disconnected inspector stays inline at tablet widths; table message states fit phone widths. Local public booking remains in mock mode. Lint/typecheck/build passed, all 144 unit tests passed, and the final full Playwright run passed 103 checks with 59 expected skips. The supplemental local audit covered 36 page/viewport combinations with no errors/overflow and 24 successful internal destinations. All six required widths were visually inspected; evidence is in `QA_REPORT.md` and the dated `.impeccable/review/copy-cleanup-2026-10-08/` folder. No deployment, Calendar event or R2 configuration write has been performed. Coordinator source is unchanged, so this cleanup needs only the website deployment when the owner authorizes shipping.
 
 ## Canonical domain cutover — 2026-09-28
 

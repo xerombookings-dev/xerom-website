@@ -21,13 +21,13 @@ Google Calendar remains the booking record. The Durable Object stores only short
 Git repository: xerombookings-dev/xerom-website
 Production branch: main
 Root directory: /
-Build command: npm run build:staging
+Build command: npm run build
 Deploy command: npx wrangler deploy
 Build variable: PUBLIC_TURNSTILE_SITE_KEY (public, hostname-scoped widget key)
 Preview builds: disabled
 ```
 
-Workers Builds deploys the same `xerom-website` Worker after each `main` push. The staging build creates `dist` before Wrangler deploys it. Keep preview builds disabled until they use disabled bookings or dedicated test calendars; the production Worker is connected to real reservation calendars. The site uses `@astrojs/cloudflare` with compile-time image optimization and no Astro session store.
+Workers Builds deploys the same `xerom-website` Worker after each `main` push. The production Astro build creates `dist` before Wrangler deploys it. The client dashboard configuration was verified on 2026-10-08: production branch `main`, build `npm run build`, deploy `npx wrangler deploy`, root `/`. `build:staging` is a separate local/staging helper and must not replace the production build command. Keep preview builds disabled until they use disabled bookings or dedicated test calendars; the production Worker is connected to real reservation calendars. The site uses `@astrojs/cloudflare` with compile-time image optimization and no Astro session store.
 
 ## Client-owned temporary Worker — 2026-09-24
 

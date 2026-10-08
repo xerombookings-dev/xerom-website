@@ -1,5 +1,76 @@
 # QA Report
 
+## Production release gates: 2026-10-08
+
+The owner authorized GitHub publication and automatic Cloudflare deployment to `xeromracing.com`. The client dashboard was inspected in the existing Safari session: repository `xerombookings-dev/xerom-website`, branch `main`, root `/`, build `npm run build`, deploy `npx wrangler deploy`, with the existing public Turnstile build variable. No dashboard setting was changed. The coordinator's existing version `172bde2c` serves 100% of traffic; its deployment follows the last coordinator source commit (`af2f293`, 2026-09-26). No coordinator source/binding change is included, so no manual coordinator deployment is required.
+
+| Pre-push gate | Result | Evidence |
+|---|---|---|
+| Dependency audit | Pass | The initial `npm audit --omit=dev` found 10 existing advisories. Compatible updates and scoped overrides now produce `found 0 vulnerabilities`. Astro 7.3.2, adapter 14.3.1 and Wrangler 4.130.0 are unchanged. Patch details and primary advisory sources are in `docs/agent/DECISIONS.md`. |
+| Lint/typecheck | Pass | Both `npm run lint` and `npm run check`: 0 errors, warnings or hints across 140 files with the patched lockfile. |
+| Unit/integration tests | Pass | `npm test`: 144 passed across 26 files, including the exactly-one-success concurrency regression. |
+| Image integrity | Pass | `npm run assets:verify`: 42 derivatives verified using Sharp 0.35.5. |
+| Production-equivalent build | Pass | `npm run build` with the publicly served production Turnstile widget key, `SITE_URL=https://xeromracing.com`, `PUBLIC_STAGING_SITE=0`. The key was passed only through the local process environment. |
+| Website packaging | Pass | `WRANGLER_LOG_PATH=/tmp/xerom-wrangler.log npx wrangler deploy --dry-run`: generated `dist/server/wrangler.json`, 74 client assets and expected existing bindings. No upload. |
+| Coordinator packaging | Pass | `WRANGLER_LOG_PATH=/tmp/xerom-wrangler.log npx wrangler deploy --dry-run --config coordinator/wrangler.race-control.jsonc`: 878.54 KiB / gzip 143.99 KiB; unchanged coordinator code. No upload. |
+| Final full browser regression | Pass | `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4323 VISUAL_VARIANT=copy-cleanup-2026-10-08 npm run test:e2e`: 103 passed, 59 expected viewport-specific skips, 0 failures on one fresh mock-mode server with patched dependencies. |
+| Live preflight | Pass, read-only | All 12 public page/robots/sitemap URLs returned 200 with apex canonical metadata and no public noindex tag. `/book` has its production Turnstile widget. Public config and availability returned 200 (21 slots), owner UI/API redirected to Access, and `www` redirected with 308 to the apex. |
+
+The first browser run after dependency patching was aborted: two local dev servers plus concurrent build/check commands conflicted over Vite's generated dependency cache, causing missing optimized modules. Both task-owned servers were stopped, `node_modules/.vite/` was cleared, and one fresh server was started. Local page preflight returned 200 and the complete final browser rerun passed. This was a local validation failure; nothing had been pushed or deployed at that point.
+
+Review screenshots remain local in the dated folders listed below. Historical screenshot baselines were preserved. Production build/deployment evidence will be recorded after Cloudflare processes the release commit; no live reservation test is part of this presentation release.
+
+## Production copy cleanup: 2026-10-08
+
+Environment: local Astro 7.3.2 / Cloudflare adapter 14.3.1, Node 26.10.0, Playwright Chromium 153.0.8010.12, `http://127.0.0.1:4323`. No `.dev.vars` or Google credentials were present. Public booking used mock mode; owner booking/config responses requiring writes were intercepted by the browser suite. No production Calendar event, R2 publication or deployment was performed.
+
+Scope: replace the owner-reviewed public draft text, retain/disclose illustrative images, remove the unused Lorem ipsum component, clarify form hints, and replace synthetic Race Control schedules/booking rows with accurate connection/search states. The final review fixed a clipped phone-table message and kept the disconnected inspector in document flow at tablet widths.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Lint | Pass | `npm run lint`: Astro diagnostics, 0 errors / warnings / hints across 140 files. |
+| Typecheck | Pass | `npm run check`: 0 errors / warnings / hints across 140 files. |
+| Unit/integration regressions | Pass | `npm test`: 144 tests passed across 26 files. |
+| Final-resource race | Pass, local regression | `tests/race-control/booking-concurrency.test.ts`, included in the unit run, submits two simultaneous attempts through `SerializedExecutor` and asserts one `201`, one `409`, and zero remaining capacity. This is not a new live Google Calendar race test. |
+| Production build | Pass | `npm run build`: Cloudflare server output completed. |
+| Image integrity | Pass | `npm run assets:verify`: all 42 manifested image derivatives verified. Only manifest wording/date changed; source photos and placeholder bitmaps are unchanged. |
+| Full final browser suite | Pass | `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4323 VISUAL_VARIANT=copy-cleanup-2026-10-08 npm run test:e2e`: 103 passed, 59 expected viewport-specific skips, 0 failures. |
+| Booking register states | Pass | Browser regression at all six widths verifies initial guidance, an intentionally held loading response, loaded records/headings, a subsequent `503`, removal of previous rows, retry guidance and empty-state width. |
+| Console, network, assets and links | Pass, local | Core-route E2E checks no browser console errors, failed requests or broken images. `node .impeccable/review/copy-cleanup-2026-10-08/audit.mjs` additionally audited 36 page/viewport combinations: 0 console/JS/request/HTTP errors, 0 page overflow, and all 24 distinct internal linked URLs returned success. External destinations were not revalidated. |
+| Keyboard/focus/reduced motion | Pass for exercised flow | E2E verifies mobile menu focus containment/Escape, booking flow and reduced-motion slideshow behavior. The supplemental audit Tabs into all 36 views and verifies a visible 3px focus outline. The new Calendar connection link was clicked at each width and opened `/race-control/connection`. |
+| Visual review | Pass for changed copy/states | Inspected `review-375.png`, `review-390.png`, `review-430.png`, `review-768.png`, `review-1024.png`, `review-1440.png` in `.impeccable/review/copy-cleanup-2026-10-08/`. Checked wrapping, illustration disclosure, empty-state placement and phone-table guidance. |
+| Diff/source scan | Pass | `git diff --check`; no rendered Lorem ipsum, owner-content-pending, placeholder-page, future-feature, mock-customer or synthetic-reservation copy remains in Astro templates. Functional phone/search examples and image provenance remain. |
+| Staging/production integration | Not run | No deployment or live Google/Turnstile/R2 action was requested. Production Access and manual screen-reader operation were not exercised. |
+
+Bootstrap: the default agent-detected Astro background server hid a sandbox `listen EPERM` failure. The local server started with approved loopback permissions using `ASTRO_DEV_BACKGROUND=1 npm run dev -- --host 127.0.0.1 --port 4323`. An intermediate run after the mobile-table adjustment failed the old assertion that column headings must be visible before results exist; that assertion now runs after actual records load, and the full final suite passes.
+
+Evidence: individual route screenshots and `browser-audit.json` are under `.impeccable/review/copy-cleanup-2026-10-08/`. Full homepage evidence is under `.impeccable/review/homepage-upgrade/copy-cleanup-2026-10-08/`; owner schedule E2E screenshots are under `.impeccable/review/copy-cleanup-2026-10-08/race-control/`. Screenshot tests now honor `VISUAL_VARIANT` so this review preserves historical screenshot files.
+
+### Copy and UI delivery gate (scoped to this change)
+
+| Rule | Status and evidence |
+|---|---|
+| R-02, copy hygiene | Pass: new customer-facing prose contains no em dash or internal replacement instruction. |
+| R-03, responsive containment | Pass: all six widths visually inspected; browser page-overflow checks and empty-table width assertions pass. |
+| R-17, factual numbers | Pass: no prices, capacities, hours or numerical business claims were invented or changed. |
+| R-18, testimonials | Pass: none added. |
+| R-23, assets | Pass: the owner authorized keeping the temporary images; no new product visual asset was created. |
+| R-24, navigation | Pass: the new connection link was clicked at six widths; 24 distinct internal destinations returned success. |
+| R-25, text contrast | Pass: existing approved tokens give muted text 9.55:1 on panels and 10.13:1 on canvas; the hero disclosure's worst-case white-photo background gives 6.25:1. Calculations are retained in `browser-audit.json`. |
+| R-26, new controls | Pass: the connection action opens a real page; fake inspector actions are removed and refresh is disabled while disconnected. |
+| R-27, states | Pass: explicit connection, initial, loading, empty-result and error states replace synthetic records. Loading/error transitions are exercised in E2E. |
+| R-28, FAQ | Pass: no generic FAQ added. |
+| R-32, keyboard | Pass: visible focus on all audited views; existing menu and booking keyboard checks pass. |
+| R-33, authored source | Pass: source/CSS edits were made directly with patches; screenshot review sheets are QA artifacts. |
+| R-34, themes | Pass: no theme controls or palette changes introduced. |
+| R-35, execution | Pass: production build and full local browser suite pass; new connection link click-through is recorded. |
+| R-36, unsupported claims | Pass: membership availability and Instagram guidance follow `PRODUCT.md` / `CONTENT_TODO.md`; no security, performance or customer claims added. |
+| R-37, direction | Pass: existing Race Control Broadcast public identity and calm owner-panel direction retained; no new design direction selected. |
+| R-38, fabricated content | Pass: synthetic bookings/customers are removed from application markup; the retained AI hero stays disclosed and marked in provenance. |
+| Purpose gate | Pass: existing panels and typography remain; disconnected details flow inline to avoid obstructing controls, and empty table states fit the visible width so guidance is readable. |
+| Liveliness/consistency | Pass: approved public identity, wordmark, hierarchy and motion remain; owner empty states use the existing operational visual language. |
+| Craftsmanship/quality locks | Pass for changed surfaces: six-width review, focus checks, accurate copy, meaningful destinations and state regression tests are recorded above. |
+
 ## Booking setup card order — 2026-09-27
 
 Environment: local Astro / Cloudflare adapter; booking endpoints configured in mock mode. No booking was submitted.

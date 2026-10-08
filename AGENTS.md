@@ -65,7 +65,7 @@ Read this before changing anything that can affect the deployed site. The reposi
    - Serves the public marketing pages, the booking flow, and the protected Race Control UI.
    - Owns every API route under `src/pages/api/**` (public `/api/availability`, `/api/bookings`, `/api/public-config`, `/api/media/:assetId`; owner `/api/admin/**`).
    - Holds the rate-limit bindings (see below), the `BOOKING_COORDINATOR` Durable Object binding, and both R2 buckets (`RACE_CONTROL_CONFIG_BUCKET`, `RACE_CONTROL_MEDIA_BUCKET`).
-   - Is **auto-deployed by Cloudflare Workers Builds on every push to `main`** (build command `npm run build:staging`, deploy command `npx wrangler deploy`). Pushing to `main` is normally all that is needed to ship website changes.
+   - Is **auto-deployed by Cloudflare Workers Builds on every push to `main`** (production build command `npm run build`, deploy command `npx wrangler deploy`). `build:staging` is a local/staging helper that forces the temporary hostname and noindex; do not use it for `xeromracing.com`. Pushing to `main` is normally all that is needed to ship website changes.
 
 2. **`xerom-race-control-coordinator`** — a separate Worker that hosts the `BookingCoordinator` Durable Object. Built from `coordinator/` with `coordinator/wrangler.race-control.jsonc`. This worker:
    - Owns serialized booking creation/revalidation, idempotency, and every owner mutation that touches Google Calendar (booking actions, block-time create/remove, config activation, recovery fences).
@@ -101,7 +101,7 @@ Coordinator deploys are a live-infrastructure action. Per `docs/agent/CLOUDFLARE
 
 - Google Calendar is the booking system of record; the coordinator's Durable Object stores only short-lived coordination/idempotency/activity state. Do not add a conventional database (see the mandatory rules above).
 - The website runs `BOOKING_MODE=live` against the production-named private calendars. Never point unattended previews or synthetic tests at those calendars; use `BOOKING_MODE=disabled` or dedicated test calendars.
-- Local `npm run dev` uses mock availability/booking and, without `.dev.vars` (gitignored), shows fixture views rather than the live Schedule — so e2e tests normally exercise the fixture/demo UI, not live Google data.
+- Local `npm run dev` uses mock availability/booking and, without `.dev.vars` (gitignored), shows Calendar connection empty states in Race Control. E2E tests normally exercise mock public booking, owner empty states and intercepted API responses, not live Google data.
 
 ### Deploy and verify commands
 

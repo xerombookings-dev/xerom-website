@@ -11,22 +11,33 @@ import { bookingRules } from '@/config/booking';
       <label>Date from<input name="from" type="date" required /></label>
       <label>Date to<input name="to" type="date" required /></label>
       <label>Booking or customer<input name="query" type="search" placeholder="Name or booking ID" /></label>
-      <label>Phone number<input name="phone" type="search" inputmode="tel" placeholder="Full or partial" /></label>
+      <label>Phone number<input name="phone" type="search" inputmode="tel" placeholder="Full or partial phone number" /></label>
       <label>Experience type<select name="service"><option value="">All experiences</option><option value="regular-sim">Regular Rig</option><option value="pro-sim">Pro Rig</option><option value="ps5">PS5 Lounge</option></select></label>
       <label>Duration<select name="duration"><option value="">All durations</option>{bookingRules.allowedDurationsMinutes.map((minutes) => <option value={minutes}>{minutes} min</option>)}</select></label>
       <button class="rc-button rc-button-primary" type="submit">Search Calendar</button>
       <button class="rc-button" type="button" data-rc-export-csv>Export CSV</button>
       <output data-rc-search-result aria-live="polite"></output>
     </form>
-    <div class="rc-table-wrap"><table class="rc-table"><caption class="sr-only">Calendar bookings</caption><thead><tr><th scope="col">Booking</th><th scope="col">When</th><th scope="col">Customer</th><th scope="col">Duration</th><th scope="col">Experience</th><th scope="col">Status</th><th scope="col">Price</th><th scope="col">Events</th><th scope="col">Action</th></tr></thead><tbody data-rc-booking-rows><tr><th scope="row">XR-DEMO-42</th><td>13 Sep · 6–7 PM</td><td>Demo customer · synthetic</td><td>60 min</td><td>Regular 01 + Pro 01</td><td><span class="rc-status">Confirmed · fixture</span></td><td>—</td><td>1</td><td>—</td></tr><tr><th scope="row">XR-DEMO-17</th><td>13 Sep · 4–6 PM</td><td>Demo customer · synthetic</td><td>120 min</td><td>PS5 01</td><td><span class="rc-status rc-status-muted">Completed · fixture</span></td><td>—</td><td>1</td><td>—</td></tr></tbody></table></div>
+    <div class="rc-table-wrap"><table class="rc-table rc-table-empty-state" data-rc-booking-table><caption class="sr-only">Calendar bookings</caption><thead><tr><th scope="col">Booking</th><th scope="col">When</th><th scope="col">Customer</th><th scope="col">Duration</th><th scope="col">Experience</th><th scope="col">Status</th><th scope="col">Price</th><th scope="col">Events</th><th scope="col">Action</th></tr></thead><tbody data-rc-booking-rows><tr><td colspan="9" class="rc-table-empty">Choose a date range and search Calendar to view bookings.</td></tr></tbody></table></div>
   </section>
 </RaceControlLayout>
 
 <script>
   const searchForm = document.querySelector<HTMLFormElement>("[data-rc-booking-search]");
   const rows = document.querySelector<HTMLElement>("[data-rc-booking-rows]");
+  const bookingTable = document.querySelector<HTMLTableElement>("[data-rc-booking-table]");
   const result = document.querySelector<HTMLOutputElement>("[data-rc-search-result]");
   const exportButton = document.querySelector<HTMLButtonElement>("[data-rc-export-csv]");
+  const setTableMessage = (message: string) => {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 9;
+    cell.className = "rc-table-empty";
+    cell.textContent = message;
+    row.appendChild(cell);
+    bookingTable?.classList.add("rc-table-empty-state");
+    rows?.replaceChildren(row);
+  };
   const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur" }).format(new Date());
   searchForm?.querySelector<HTMLInputElement>('input[name="from"]')?.setAttribute("value", date);
   searchForm?.querySelector<HTMLInputElement>('input[name="to"]')?.setAttribute("value", date);
@@ -47,12 +58,14 @@ import { bookingRules } from '@/config/booking';
     event.preventDefault();
     if (!rows || !result) return;
     result.textContent = "Reading Calendar events…";
+    setTableMessage("Loading Calendar bookings…");
     const params = buildParams();
     try {
       const response = await fetch(`/api/admin/bookings?${params}`, { cache: "no-store" });
       const payload = await response.json() as { data?: Array<{ bookingId: string | null; version: number; status: string; start: string; end: string; durationMinutes: number; customer: { name: string; phone: string; email?: string }; resources: string[]; additionalControllers: number; priceTotal: number | null; eventCount: number }>; error?: { message?: string } };
       if (!response.ok) throw new Error(payload.error?.message ?? "Bookings unavailable.");
       rows.replaceChildren();
+      bookingTable?.classList.remove("rc-table-empty-state");
       for (const booking of payload.data ?? []) {
         const row = document.createElement("tr");
         const id = document.createElement("th"); id.scope = "row"; id.textContent = booking.bookingId ?? "Calendar block";
@@ -107,11 +120,12 @@ import { bookingRules } from '@/config/booking';
         row.appendChild(id); row.appendChild(when); row.appendChild(customer); row.appendChild(duration); row.appendChild(resources); row.appendChild(status); row.appendChild(price); row.appendChild(count); row.appendChild(action); rows.appendChild(row);
       }
       if ((payload.data?.length ?? 0) === 0) {
-        const row = document.createElement("tr"); const cell = document.createElement("td"); cell.colSpan = 9; cell.className = "rc-table-empty"; cell.textContent = "No Calendar bookings match these filters."; row.appendChild(cell); rows.appendChild(row);
+        setTableMessage("No Calendar bookings match these filters.");
       }
       result.textContent = `${payload.data?.length ?? 0} grouped Calendar record(s).`;
     } catch (error) {
-      result.textContent = error instanceof Error ? `${error.message} Showing labelled fixtures.` : "Bookings unavailable. Showing labelled fixtures.";
+      setTableMessage("Bookings could not be loaded. Try searching again.");
+      result.textContent = error instanceof Error ? `${error.message} Try searching again.` : "Bookings could not be loaded. Try searching again.";
     }
   });
 </script>

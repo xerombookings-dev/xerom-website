@@ -11,6 +11,7 @@ test("capture approved-size hero reproduction", async ({ page }, testInfo) => {
     const images = Array.from(document.querySelectorAll<HTMLImageElement>(".home-hero img"));
     return images.length >= 1 && images.every((image) => image.complete && image.naturalWidth > 0);
   });
-  await mkdir(".impeccable/review/homepage-upgrade/after", { recursive: true });
-  await page.screenshot({ path: ".impeccable/review/homepage-upgrade/after/hero-repro-1536.png", fullPage: false, animations: "disabled" });
+  const reviewDirectory = `.impeccable/review/homepage-upgrade/${process.env.VISUAL_VARIANT ?? "after"}`;
+  await mkdir(reviewDirectory, { recursive: true });
+  await page.screenshot({ path: `${reviewDirectory}/hero-repro-1536.png`, fullPage: false, animations: "disabled" });
 });

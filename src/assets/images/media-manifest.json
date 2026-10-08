@@ -1,10 +1,10 @@
 {
   "$schema": "./media-manifest.schema-note",
   "manifestVersion": 2,
-  "updatedAt": "2026-09-26",
+  "updatedAt": "2026-10-08",
   "status": "OWNER_MEDIA_WITH_PLACEHOLDER_HERO",
   "globalUsage": {
-    "replacementGate": "Only the social-group hero remains AI placeholder media and must be replaced with an owner-approved Xerom photograph before production launch.",
+    "replacementGate": "The social-group hero remains AI placeholder media, approved to remain with an illustration disclosure on 2026-10-08. Replace it when final owner-approved Xerom photography is supplied.",
     "astro": "Import each 1200px or 1600px master through astro:assets; Astro generates optimized AVIF/WebP outputs. The checked-in 800px and 480px JPEGs are verified responsive fallbacks and portable derivatives.",
     "semanticBoundary": [
       "XEROM wordmark and logo",
@@ -16,7 +16,7 @@
   "assets": {
     "socialGroupHero": {
       "status": "PLACEHOLDER_AI_GENERATED",
-      "alt": "Illustrative placeholder of friends enjoying a sim-racing session; replace with approved Xerom photography before launch.",
+      "alt": "Illustration of people enjoying sim racing. This is not a photo of Xerom or its customers.",
       "aspectRatio": "16:9",
       "focalPoint": {
         "x": 0.58,

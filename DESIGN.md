@@ -232,7 +232,7 @@ The brand glyph is the deliberate exception to the stroked icon family. `public/
 - **Background:** Broadcast Panel over Canvas Black.
 - **Shadow Strategy:** Flat; hierarchy comes from the Structural Line border and media contrast.
 - **Internal Padding:** Primarily 1rem, expanding to 2rem–5rem in the large CTA panel.
-- **Media:** Regular Rig, Pro Rig, and PS5 Lounge cards use the September 2026 owner photographs, with 4:3 crops in 480×360, 800×600, and 1200×900 JPEG sizes. The existing Cafe card photo remains in place. Four 5:4 Xerom Experience photographs use 480×384, 800×640, and 1200×960 derivatives in Choose Your Setup. Astro imports the 1200px versions and generates optimized delivery formats. The crops preserve the main subject, and the 1200px derivatives are modest deterministic upscales from the supplied files. Experience cards enlarge subtly to 1.035 scale over 800ms on hover. The 16:9 social-group hero remains AI placeholder media and must keep placeholder filename and alt language until owner-approved photography replaces it.
+- **Media:** Regular Rig, Pro Rig, and PS5 Lounge cards use the September 2026 owner photographs, with 4:3 crops in 480×360, 800×600, and 1200×900 JPEG sizes. The existing Cafe card photo remains in place. Four 5:4 Xerom Experience photographs use 480×384, 800×640, and 1200×960 derivatives in Choose Your Setup. Astro imports the 1200px versions and generates optimized delivery formats. The crops preserve the main subject, and the 1200px derivatives are modest deterministic upscales from the supplied files. Experience cards enlarge subtly to 1.035 scale over 800ms on hover. The 16:9 social-group hero remains AI placeholder media, retaining its placeholder filenames and provenance. The visible label and alt text disclose it as an illustration rather than Xerom venue/customer photography; internal replacement instructions stay out of customer copy.
 
 **The Provenance Gate Rule.** A service photograph may be treated as production media only when its owner-supplied status and derivatives are recorded in the media manifest. The current social-group hero does not pass that gate.
 
@@ -244,7 +244,7 @@ The brand glyph is the deliberate exception to the stroked icon family. `public/
 
 ### Navigation
 
-The sticky header is a translucent Canvas Black broadcast bar with a fine Warm White mixed border and 16px backdrop blur. The owner-supplied deterministic SVG trace at `src/assets/brand/xerom-logo.svg` anchors the left at a fluid 7.8rem–11rem width; the footer uses the same asset at 8.5rem. Compressed uppercase service links and a Klang location cue occupy the desktop center. A white membership action uses the clipped racing-plate silhouette and links to the explicit membership placeholder; the primary booking action closes the right. Below 900px, the navigation links, including membership, move into a two-line menu while a compact always-visible Book pill remains in the header. The opened menu is keyboard-contained, Escape-dismissable, and moves focus into its first link.
+The sticky header is a translucent Canvas Black broadcast bar with a fine Warm White mixed border and 16px backdrop blur. The owner-supplied deterministic SVG trace at `src/assets/brand/xerom-logo.svg` anchors the left at a fluid 7.8rem–11rem width; the footer uses the same asset at 8.5rem. Compressed uppercase service links and a Klang location cue occupy the desktop center. A white membership action uses the clipped racing-plate silhouette and links to the membership information page, which states registration and purchases are unavailable; the primary booking action closes the right. Below 900px, the navigation links, including membership, move into a two-line menu while a compact always-visible Book pill remains in the header. The opened menu is keyboard-contained, Escape-dismissable, and moves focus into its first link.
 
 ### Race / Play / Refuel Route
 
@@ -286,6 +286,8 @@ Race Control is the private owner front-desk surface and keeps the Broadcast lan
 
 **The Operate, Don’t Market Rule.** Race Control should read like a calm owner instrument panel: schedule, state, impact, and next action first. Never import the public homepage’s cinematic hero, promotional route, invented operational claims, or decorative density into this shell.
 
+When Calendar credentials or the coordinator binding are missing, Schedule and booking details use the existing empty-state panel with connection guidance. The disconnected inspector stays in document flow at every width. No synthetic customers, reservations or busy intervals appear. The register starts with search guidance and uses explicit loading, empty-result and failure rows. These message states fit the visible table width and omit column headings until records are loaded; populated results retain horizontal scrolling. A failed search clears previous results so they cannot be mistaken for the latest Calendar read.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -296,7 +298,7 @@ Race Control is the private owner front-desk surface and keeps the Broadcast lan
 - **Do** use Action Racing Red behind normal-sized white text and reserve Bright Racing Red for unfilled display accents.
 - **Do** keep prices, services, hours, and other business facts sourced from centralized configuration and confirmed project documentation.
 - **Do** preserve visible Focus Amber focus, keyboard menu behavior, 3.25rem control heights, semantic live/error states, and reduced-motion handling.
-- **Do** keep the social-group hero labelled as placeholder material in source and alt text until owner-approved Xerom photography replaces it.
+- **Do** preserve the social-group hero's placeholder provenance in source and disclose the illustration in visible copy and alt text until owner-approved Xerom photography replaces it.
 
 ### Don't:
 

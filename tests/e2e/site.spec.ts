@@ -57,7 +57,7 @@ test("homepage presents the approved story without overflow", async ({ page }) =
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test("membership header CTA opens its explicit placeholder", async ({ page }) => {
+test("membership header CTA opens the membership information page", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) <= 900, "Desktop header only");
   await page.goto("/");
   const membershipCta = page.getByRole("link", { name: "BECOME A MEMBER!", exact: true });
@@ -66,7 +66,7 @@ test("membership header CTA opens its explicit placeholder", async ({ page }) =>
   await membershipCta.click();
   await expect(page).toHaveURL(/\/membership$/);
   await expect(page.getByRole("heading", { level: 1, name: "Become a member" })).toBeVisible();
-  await expect(page.getByText(/No membership purchase or registration is available/i)).toBeVisible();
+  await expect(page.getByText(/Membership registration and purchases are not currently available/i)).toBeVisible();
   await expect(page.getByRole("link", { name: "Book a session", exact: true })).toHaveAttribute("href", "/book");
 });
 
@@ -148,14 +148,14 @@ test("mobile header keeps booking visible and menu keyboard-safe", async ({ page
   await expect(toggle).toBeFocused();
 });
 
-test("mobile membership menu link opens the shared placeholder", async ({ page }) => {
+test("mobile membership menu link opens the membership information page", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) > 900, "Mobile and tablet navigation only");
   await page.goto("/");
   await page.locator("[data-menu-toggle]").click();
   await page.getByRole("link", { name: "BECOME A MEMBER!", exact: true }).click();
   await expect(page).toHaveURL(/\/membership$/);
   await expect(page.getByRole("heading", { level: 1, name: "Become a member" })).toBeVisible();
-  await expect(page.getByText(/No membership purchase or registration is available/i)).toBeVisible();
+  await expect(page.getByText(/Membership registration and purchases are not currently available/i)).toBeVisible();
 });
 
 test("mock booking flow reaches confirmation", async ({ page }) => {
@@ -351,6 +351,7 @@ test("core routes render without console errors or broken images", async ({ page
     const response = await page.goto(route);
     expect(response?.ok(), `${route} should load`).toBe(true);
     await expect(page.locator("main h1")).toBeVisible();
+    await expect(page.locator("main")).not.toContainText(/Lorem ipsum|owner content pending|placeholder page|feature is planned|feature will be added later/i);
     const broken = await page.locator("img").evaluateAll((images) => images.filter((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth === 0).length);
     expect(broken, `${route} should have no broken images`).toBe(0);
   }

@@ -45,7 +45,7 @@ const setupSlides = [
           {publishedHeroAssetId ? <img class="home-hero-image hero-image" src={`/api/media/${publishedHeroAssetId}`} alt="" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" /> : <picture>
             <source type="image/avif" srcset={`${media.heroSources.heroAvif640.src} 640w, ${media.heroSources.heroAvif960.src} 960w, ${media.heroSources.heroAvif1600.src} 1600w`} sizes="(max-width: 900px) 100vw, 88rem" />
             <source type="image/webp" srcset={`${media.heroSources.heroWebp640.src} 640w, ${media.heroSources.heroWebp960.src} 960w, ${media.heroSources.heroWebp1600.src} 1600w`} sizes="(max-width: 900px) 100vw, 88rem" />
-            <img class="home-hero-image hero-image" src={media.hero.src} alt="Illustrative placeholder showing friends enjoying sim racing; replace with approved Xerom photography" width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" />
+            <img class="home-hero-image hero-image" src={media.hero.src} alt="Illustration of people enjoying sim racing. This is not a photo of Xerom or its customers." width="1600" height="900" loading="eager" fetchpriority="high" decoding="async" />
           </picture>}
         </div>
         <div class="home-hero-copy">
@@ -59,7 +59,7 @@ const setupSlides = [
           </div>
           <a class="home-location-cue" href={runtimeConfig.websiteContent.venue.mapsUrl}>Bandar Bukit Tinggi, Klang</a>
         </div>
-        {!publishedHeroAssetId && <p class="hero-placeholder-label">Illustrative hero · final owner photo pending</p>}
+        {!publishedHeroAssetId && <p class="hero-placeholder-label">Illustration, not a photo of the Xerom venue.</p>}
       </section>
 
       <ExperienceDock />

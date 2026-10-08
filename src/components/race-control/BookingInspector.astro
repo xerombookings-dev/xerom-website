@@ -3,8 +3,8 @@ import { NO_SHOW_GRACE_MINUTES } from "@/lib/race-control/no-show";
 interface Props { live?: boolean }
 const { live = false } = Astro.props;
 ---
-<aside class="rc-inspector rc-panel" aria-labelledby="selected-booking">
-  <div class="rc-panel-head"><h2 id="selected-booking">{live ? 'Select a live booking' : 'Mock group booking · selected fixture'}</h2><button class="rc-close" type="button" aria-label="Close booking details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button></div>
+<aside class:list={{ 'rc-inspector': true, 'rc-panel': true, 'rc-inspector-disconnected': !live }} aria-labelledby="selected-booking">
+  <div class="rc-panel-head"><h2 id="selected-booking">{live ? 'Select a live booking' : 'Booking details'}</h2>{live && <button class="rc-close" type="button" aria-label="Close booking details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>}</div>
   {live ? <div class="rc-inspector-body" data-rc-live-inspector>
     <div class="rc-empty" data-rc-live-empty><h2>Live inspector ready</h2><p>Choose a booking block from the live Calendar read to inspect its status, experience, timing and available actions.</p></div>
     <dl data-rc-live-details hidden>
@@ -40,7 +40,7 @@ const { live = false } = Astro.props;
       <output data-live-block-result aria-live="polite"></output>
     </div>
     <div class="rc-note" data-rc-live-note hidden><strong>Calendar is authoritative</strong><p>Lifecycle actions remain conditional on the latest grouped Calendar version.</p></div>
-  </div> : <div class="rc-inspector-body"><dl><div><dt>Booking ID</dt><dd class="rc-mono">XR-DEMO-42</dd></div><div><dt>Status</dt><dd><span class="rc-status">Confirmed · fixture</span></dd></div><div><dt>When</dt><dd>Sun, 13 Sep · 6–7 PM MYT</dd></div><div><dt>Experience</dt><dd><span class="rc-chip">Regular 01</span> <span class="rc-chip">Pro 01</span></dd></div><div><dt>Customer</dt><dd>Demo customer · synthetic</dd></div></dl><button class="rc-button rc-button-primary" type="button">View actions (demo)</button><button class="rc-button" type="button">Copy fixture ID</button><div class="rc-note"><strong>Calendar is authoritative</strong><p>Live mutation actions will be enabled only after owner authentication and contract-backed Calendar reads.</p></div></div>}
+  </div> : <div class="rc-inspector-body"><p>Connect the shared Calendar to view booking details and available actions.</p></div>}
 </aside>
 
 {live && <script>
