@@ -1,5 +1,24 @@
 # QA Report
 
+## Production deployment checkpoint: 2026-10-08
+
+Application release [51a33b6](https://github.com/xerombookings-dev/xerom-website/commit/51a33b6ece5c41cecb61a2e08915a010a684d1ce) was pushed as a fast-forward to `main`. GitHub's `Workers Builds: xerom-website` check completed successfully. Client Cloudflare build `f2882cbe-faab-4e30-a04f-b2b7434a0d6b` used `npm run build` followed by `npx wrangler deploy`, completed in 40 seconds, and deployed website version `78a01f64` at 100% traffic. Its build environment reported Node 24.18.0 and npm 10.9.2. The coordinator remains on `172bde2c`; no manual build/deployment was needed or performed.
+
+| Production check | Result | Evidence |
+|---|---|---|
+| Changed public copy | Pass | Membership, Events and What's New show the replacements on `https://xeromracing.com`; old placeholder/roadmap text is absent. Verified via HTTP and the in-app browser. |
+| Public pages and metadata | Pass | All 12 public page/robots/sitemap URLs returned 200. Marketing/booking canonical tags use the apex, public pages have no noindex meta tag, robots allows indexing, and sitemap URLs use the apex. |
+| Linked assets | Pass | 35 referenced image/script/style/icon asset URLs returned success. The retained illustrative media is served. |
+| Social metadata and error handling | Pass | The OG image and web manifest return 200; a missing page returns 404 and invalid availability parameters return 400. |
+| Business configuration | Pass | `/api/public-config` returns 200 with `compiledFallback: false`; its active revision matches the pre-deployment checkpoint. No R2 configuration publication occurred. |
+| Live booking read flow | Pass | The membership booking link opens `/book`, displays the confirmed service prices/durations, and loads 21 start times from live availability. No time was reserved or booking submitted. |
+| Turnstile | Render/config verified; live submission not tested | `/book` contains its production widget. The live browser recorded two error-level console messages from the Cloudflare challenge iframe (`%c%d ... NaN`), with no application-origin console errors during the exercised flow. No CAPTCHA interaction or live confirmation test was performed. |
+| Owner protection | Pass, unauthenticated | `/race-control`, `/race-control/schedule` and `/api/admin/bookings` return 302 to the existing Cloudflare Access hostname. |
+| Redirect/fallback | Pass | `www` returns 308 to the apex; the `workers.dev` fallback returns 200 with `X-Robots-Tag: noindex, nofollow`. |
+| Screenshot evidence | Captured | `.impeccable/review/copy-cleanup-2026-10-08/production-membership.jpg`, captured from the live page. Read-only HTTP evidence is saved locally as `/private/tmp/xerom-production-before.json` and `/private/tmp/xerom-production-after.json`. |
+
+This record is a checkpoint of the application release. A documentation-only follow-up records the result without changing application code, dependency versions, bindings, or business configuration.
+
 ## Production release gates: 2026-10-08
 
 The owner authorized GitHub publication and automatic Cloudflare deployment to `xeromracing.com`. The client dashboard was inspected in the existing Safari session: repository `xerombookings-dev/xerom-website`, branch `main`, root `/`, build `npm run build`, deploy `npx wrangler deploy`, with the existing public Turnstile build variable. No dashboard setting was changed. The coordinator's existing version `172bde2c` serves 100% of traffic; its deployment follows the last coordinator source commit (`af2f293`, 2026-09-26). No coordinator source/binding change is included, so no manual coordinator deployment is required.

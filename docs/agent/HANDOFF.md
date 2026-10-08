@@ -2,7 +2,13 @@
 
 Last updated: 2026-10-08
 
-## Production publication authorized: 2026-10-08
+## Production copy release deployed: 2026-10-08
+
+Application commit `51a33b6ece5c41cecb61a2e08915a010a684d1ce` is pushed to `main`. Cloudflare build `f2882cbe-faab-4e30-a04f-b2b7434a0d6b` completed successfully and deployed `xerom-website` version `78a01f64` at 100% traffic. The live membership/announcement copy, public pages, 35 linked assets, canonical metadata, live availability, `www` redirect and owner Access protection all passed read-only verification. The booking UI loaded 21 start times without creating a reservation. Active R2 business configuration is unchanged. The production Turnstile widget is present; its iframe emitted two console messages during browser verification, and live submission was not tested.
+
+Coordinator `172bde2c` remains active and needed no manual deploy. The owner-authorized release used GitHub and the existing Cloudflare automatic pipeline; dashboard settings, secrets, Calendar data and R2 publication were not changed. `QA_REPORT.md` records the application release checkpoint, dependency patch/gate results and local/live screenshot paths. The documentation follow-up records that verified checkpoint; it does not change application behavior.
+
+## Production publication authorized: 2026-10-08 (pre-push checkpoint)
 
 The owner requested GitHub publication and Cloudflare's automatic build for `xeromracing.com`. The client dashboard confirms production `main` uses `npm run build` and `npx wrangler deploy`; older staging-command guidance was corrected in the docs. Coordinator version `172bde2c` is already active at 100%, and this release has no coordinator source/binding changes or need for a manual coordinator deployment.
 
