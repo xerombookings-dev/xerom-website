@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-30
 
+## Mobile booking release deployed — 2026-10-30
+
+Application commit `1b93934` is on `main`. Cloudflare build `b87846db-6a3a-43ce-b24d-6975982d4b64` succeeded as website version `938835e3-511e-4f40-8dc5-bca814c40551`. Live booking layout passed all six widths with read-only availability. Public DNS now returns Cloudflare A records; requests pinned to those records give apex 200 and `www` 308, but ordinary local resolution still fails. Record this resolver limitation rather than claiming universal DNS recovery.
+
+Race Control paths/admin APIs remain Access-protected (302). The current Safari Cloudflare identity is denied by Access, so authenticated schedule/settings health and the coordinator's active version cannot be verified. Live availability returned `mode: live` and ten slots, including the coordinator recovery-state read. No live reservation or owner/config mutation was made. No coordinator change/deploy is required for this CSS release. See the top of QA_REPORT.md for exact evidence and the live screenshot.
+
+The owner's next verification is an authorized Race Control login; do not weaken Access or create Calendar events to bypass this gap. The live configuration still shows four Regular rigs; this release preserves it. Seven baseline production dependency advisories remain separate follow-up work. The notes below are historical pre-release checkpoints.
+
 ## Mobile two-column booking preview — 2026-10-30
 
 Owner approved pushing this reviewed layout to `main` on 2026-10-30 and requested a concurrent read-only Race Control check. GitHub `main` was verified at `704dc4586388637a65c60e05863c0aa1be17430e` before publication. Both Worker dry runs passed; no coordinator source changed or manual deployment is needed. The current production-only audit reports seven baseline dependency advisories; dependency changes are outside this layout release. Record the actual push/build/live results after publication; do not infer a healthy domain or coordinator from a successful Git push.

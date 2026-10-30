@@ -1,5 +1,15 @@
 # QA Report
 
+## Mobile slot layout production release: 2026-10-30
+
+Owner-approved application commit `1b93934c2c21c78e08fe093b231dd3aeb372ad7a` was pushed as a fast-forward to `main`; the remote SHA was verified. Cloudflare Workers Build `b87846db-6a3a-43ce-b24d-6975982d4b64` completed successfully and reported deployed website version `938835e3-511e-4f40-8dc5-bca814c40551`. No coordinator source/binding changed and no coordinator deployment was performed.
+
+- `dig` returned the expected Cloudflare nameservers and Cloudflare A records for apex and `www`. HTTPS checks using `curl --resolve` against the returned address, with normal certificate/hostname validation, returned apex 200 and `www` 308 to the apex. Ordinary local `curl` resolution still failed after the release; do not treat this as proof that every client resolver has recovered.
+- `/book` returned 200. `node /tmp/xerom-live-layout-release.mjs` checked production at 375, 390, 430, 768, 1024 and 1440px with Chromium mapped to the published DNS address. Phone columns are two, tablet three, desktop four; all six have zero page overflow, contained time/status/resource markers, zero page errors and zero failed application requests. Screenshot `.impeccable/review/mobile-slot-grid-2026-10-30/production-390.png` was inspected. The live four-Regular-rig configuration wraps PS5 indicators intact onto another row; the layout release does not change inventory.
+- Production availability returned 200, `mode: live`, ten slots and ten available start times. This exercises the Calendar read and coordinator recovery-state read path; it is not proof of booking insertion or owner mutations.
+- Unauthenticated `/race-control`, schedule, bookings, activity, `/api/admin/bookings` and `/api/admin/config/draft` all returned 302 to Access. Safari's existing Cloudflare identity was rejected with `That account does not have access.` No policy change or alternate-identity attempt was made. Authenticated Race Control health and current coordinator version remain unverified in this session.
+- No booking, block, R2 publication, secret or Access policy was created/changed. No Turnstile challenge or live booking submission was performed. Seven baseline production dependency advisories remain documented in the release preflight.
+
 ## Two-column mobile booking preview: 2026-10-30
 
 Release preflight after owner push approval: remote `main` verified at `704dc4586388637a65c60e05863c0aa1be17430e`. Website and active-coordinator `wrangler deploy --dry-run` both passed. `npm audit --omit=dev` reported seven baseline advisories (one low, three moderate, three high); the lockfile is unchanged by this release. This layout-only change does not remediate those dependencies. Full local gates immediately above/below refer to the reviewed source; no application changes followed the passing browser run.
