@@ -1,5 +1,27 @@
 # QA Report
 
+## Two-column mobile booking preview: 2026-10-30
+
+Release preflight after owner push approval: remote `main` verified at `704dc4586388637a65c60e05863c0aa1be17430e`. Website and active-coordinator `wrangler deploy --dry-run` both passed. `npm audit --omit=dev` reported seven baseline advisories (one low, three moderate, three high); the lockfile is unchanged by this release. This layout-only change does not remediate those dependencies. Full local gates immediately above/below refer to the reviewed source; no application changes followed the passing browser run.
+
+Local review only, Astro 7.3.2 on Node 26.12.0 at `http://127.0.0.1:4323`, using the development script's mock booking/availability mode. No push, Cloudflare deployment, configuration publication or Google Calendar mutation. Phone slots now use two equal columns at the existing 560px breakpoint; service groups wrap intact where necessary. Tablet/desktop remain three/four columns.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Lint and typecheck | Pass | `npm run lint` and `npm run check`: 140 files, zero errors/warnings/hints. |
+| Unit/integration | Pass | `npm test`: 144 tests across 26 files, including the final-resource exactly-one-success regression. No live concurrency test was performed. |
+| Production build | Pass | `npm run build`: completed Cloudflare server output. No upload. |
+| Focused six-width regression | Pass | `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4323 VISUAL_VARIANT=mobile-slot-grid-2026-10-30 npm run test:e2e -- --grep 'today auto-loads availability'`: 6/6 passed at 375, 390, 430, 768, 1024 and 1440px. Asserts expected column counts, every time/state/service marker fits, no document overflow, unavailable-slot rejection and keyboard selection. |
+| Full browser regression | Pass | Same environment/variant with `npm run test:e2e`: 108 passed, 54 intentional viewport-specific skips, zero failures. Covers mock confirmation, booking validation/state invalidation, core route browser/network/image checks, focus/menu and reduced-motion behavior. |
+| Additional narrow-width matrix | Pass, Chromium | `node /tmp/xerom-slot-preview.mjs`: Regular-only, Pro-only, PS5-only and all-three selections at 320, 375, 390 and 430px. All 16 cases fit with zero page overflow, console/JS errors or failed requests. |
+| Supplemental WebKit matrix | Incomplete | The same script's WebKit pass timed out waiting for the first slot; no WebKit layout result is claimed. Chromium matrix and the full required Chromium suite completed successfully. |
+| Visual inspection | Pass for changed layout | Reviewed `slots-mobile-375.png`, `slots-mobile-390.png`, `slots-mobile-430.png`, `slots-tablet-768.png`, `slots-desktop-1024.png`, `slots-desktop-1440.png` and the ten-slot `working-chromium-390.png` in `.impeccable/review/mobile-slot-grid-2026-10-30/`. All three service groups remain visible; selected/unavailable treatments remain distinct. |
+| Design detector | Advisory | Manual detector over `src/styles/global.css` returned 38 existing advisories, none on the changed phone slot rules. No generated sidecar repair was performed; DESIGN.md remains authoritative. |
+
+Initial local server and browser attempts were blocked by sandbox loopback/Mach-port permissions. Approved local execution allowed the checks above to complete. Dependencies were installed from the existing lockfile; npm reported 10 audit advisories, not addressed by this scoped layout change. No dependency files changed. Real iPhone/Android device and manual screen-reader checks were not performed.
+
+Scoped delivery gate: responsive containment PASS (six widths and 320px matrix); meaningful controls/states PASS (mock confirmation and unavailable/selected regression); keyboard/focus PASS (Enter selection and visible amber focus in captures); content/provenance PASS (no business copy/assets changed); incumbent design/motion PASS (existing Broadcast tokens retained, no animation added); execution PASS (lint/typecheck/unit/build/E2E above).
+
 ## Production deployment checkpoint: 2026-10-08
 
 Application release [51a33b6](https://github.com/xerombookings-dev/xerom-website/commit/51a33b6ece5c41cecb61a2e08915a010a684d1ce) was pushed as a fast-forward to `main`. GitHub's `Workers Builds: xerom-website` check completed successfully. Client Cloudflare build `f2882cbe-faab-4e30-a04f-b2b7434a0d6b` used `npm run build` followed by `npx wrangler deploy`, completed in 40 seconds, and deployed website version `78a01f64` at 100% traffic. Its build environment reported Node 24.18.0 and npm 10.9.2. The coordinator remains on `172bde2c`; no manual build/deployment was needed or performed.

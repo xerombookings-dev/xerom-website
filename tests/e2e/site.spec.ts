@@ -256,8 +256,7 @@ test("booking setup enforces configured limits and controller rules", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
 });
 
-test("today auto-loads approved single-row availability indicators", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-375", "Single approved-indicator browser check");
+test("today auto-loads availability indicators that fit the responsive slot grid", async ({ page }, testInfo) => {
   let requestedDate = "";
   await page.route("**/api/availability?**", async (route) => {
     requestedDate = new URL(route.request().url()).searchParams.get("date") ?? "";
@@ -285,9 +284,27 @@ test("today auto-loads approved single-row availability indicators", async ({ pa
   await expect(page.locator("[data-availability-legend]")).toContainText("PS PS5 Lounge");
   await expect(page.locator(".availability-slot").first()).toHaveAccessibleName(/Regular Rig: 3 of 3 available.*Pro Rig: 1 of 1 available.*PS5 Lounge: 2 of 2 available/i);
   await expect(page.locator(".availability-slot").nth(1)).toHaveAttribute("aria-disabled", "true");
-  const signalTops = await page.locator(".availability-slot").first().locator(".availability-signal-group").evaluateAll((groups) => groups.map((group) => Math.round(group.getBoundingClientRect().top)));
-  expect(new Set(signalTops).size).toBe(1);
+  const width = page.viewportSize()!.width;
+  expect(await page.locator("[data-slots]").evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(" ").length)).toBe(width <= 560 ? 2 : width <= 900 ? 3 : 4);
+  const fit = await page.locator(".availability-slot").evaluateAll((slots) => slots.every((slot) => {
+    const card = slot.getBoundingClientRect();
+    return card.height >= 52 && slot.scrollWidth <= slot.clientWidth + 1 &&
+      [...slot.querySelectorAll(".availability-time, .availability-state, .availability-signal-group, .availability-mark")].every((part) => {
+        const box = part.getBoundingClientRect();
+        return box.left >= card.left && box.right <= card.right && box.top >= card.top && box.bottom <= card.bottom;
+      });
+  }));
+  expect(fit).toBe(true);
+  await page.locator(".availability-slot").nth(1).click({ force: true });
+  await expect(page.getByRole("button", { name: /enter details/i })).toBeDisabled();
+  await page.locator(".availability-slot").first().focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".availability-slot").first()).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: /enter details/i })).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  if (process.env.VISUAL_VARIANT) {
+    await page.locator(".booking-shell").screenshot({ path: `.impeccable/review/${process.env.VISUAL_VARIANT}/slots-${testInfo.project.name}.png` });
+  }
 });
 
 test("availability propagates every resource and duration and invalidates stale times", async ({ page }, testInfo) => {

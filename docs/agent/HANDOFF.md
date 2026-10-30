@@ -1,6 +1,14 @@
 # Agent Handoff
 
-Last updated: 2026-10-08
+Last updated: 2026-10-30
+
+## Mobile two-column booking preview — 2026-10-30
+
+Owner approved pushing this reviewed layout to `main` on 2026-10-30 and requested a concurrent read-only Race Control check. GitHub `main` was verified at `704dc4586388637a65c60e05863c0aa1be17430e` before publication. Both Worker dry runs passed; no coordinator source changed or manual deployment is needed. The current production-only audit reports seven baseline dependency advisories; dependency changes are outside this layout release. Record the actual push/build/live results after publication; do not infer a healthy domain or coordinator from a successful Git push.
+
+Owner requested review before any push to main. Local CSS now gives phone availability two columns, stacks time/state above service signals, and allows intact service groups to wrap. Tablet/desktop column counts and booking behavior remain unchanged. The strengthened availability E2E runs at all six required widths. Lint/typecheck/build, 144 unit tests and the full Playwright suite (108 passed, 54 intentional skips) passed. Additional Chromium checks cover each individual service and all three together at 320/375/390/430px with no overflow or browser errors. Evidence is in `QA_REPORT.md` and `.impeccable/review/mobile-slot-grid-2026-10-30/`.
+
+Working mock-mode preview: `http://127.0.0.1:4323/book`; a 390px in-app browser is open on the time step with all three services selected. Keep changes local pending owner visual review. Nothing has been pushed/deployed; no live booking or configuration changed. DESIGN.md describes the locally verified layout; derived sidecar drift was left alone.
 
 ## Production copy release deployed: 2026-10-08
 

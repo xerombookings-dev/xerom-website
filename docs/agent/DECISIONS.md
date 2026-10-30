@@ -1,5 +1,11 @@
 # Decision Log
 
+## 2026-10-30 — Two-column mobile booking preview
+
+- Owner requested a working two-column phone availability layout for review before any push to `main`. Keep this change local until that review.
+- At the existing 560px breakpoint, use two equal slot columns. Each card stacks time and explicit state above its service indicators; whole service groups may wrap to keep all markers visible. Preserve existing type, brand tokens, accessible names, selection behavior and tablet/desktop column counts.
+- Verify locally in mock mode; no coordinator source, production infrastructure, Calendar state or business configuration changes are required.
+
 ## 2026-09-28 — Canonical domain cutover
 
 - Keep GoDaddy as registrar and use Cloudflare as authoritative DNS for `xeromracing.com`; the domain registration is not being transferred.

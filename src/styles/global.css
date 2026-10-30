@@ -302,9 +302,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .controller-choice { grid-template-columns: 1fr; }
   .availability-toolbar { grid-template-columns: minmax(0, 1fr); }
   .availability-toolbar .button { width: 100%; }
-  .slot-grid { grid-template-columns: 1fr; }
-  .availability-slot { grid-template-columns: minmax(0, 1fr) auto; min-height: 4.25rem; }
-  .availability-signals { gap: .5rem; }
+  .slot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .availability-slot { grid-template-columns: minmax(0, 1fr); min-height: 6rem; }
+  .availability-slot .availability-state { grid-row: 2; }
+  .availability-signals { flex-wrap: wrap; gap: .5rem; overflow: visible; white-space: normal; }
   .availability-mark { width: .65rem; height: .65rem; }
   .visit-grid > div:last-child { grid-column: auto; }
   .booking-progress b { display: none; }
